@@ -1,5 +1,5 @@
 def caesarCipher(text, key=2, mode="encrypt"):
-    if mode == "encrypt":
+    if mode == "encrypt" or mode == 'e':
         cipher = []
         for i in text:
             if i == " ":
@@ -9,7 +9,7 @@ def caesarCipher(text, key=2, mode="encrypt"):
             else:
                 cipher.append(chr((ord(i) + key - 97) % 26 + 97))
         return ''.join(cipher)
-    elif mode == "decrypt":
+    elif mode == "decrypt" or mode == 'd':
         msg = []
         for i in text:
             if i == " ":

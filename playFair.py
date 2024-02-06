@@ -16,7 +16,7 @@ def splitText(text):
 def playFair(text, key, mode='encrypt'):
     Matrix = keyMatrix(key)
     pairs = splitText(prepare(text))
-    if mode == 'decrypt':
+    if mode == 'decrypt' or mode == 'd':
         Matrix = Matrix.replace('J', '')
         decryptedText = ''
         for pair in pairs:
@@ -32,7 +32,7 @@ def playFair(text, key, mode='encrypt'):
             else:
                 decryptedText += pair
         return decryptedText
-    elif mode == 'encrypt':
+    elif mode == 'encrypt' or mode == 'e':
         cipherText = ''
         for pair in pairs:
             if len(pair) == 2:

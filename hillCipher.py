@@ -12,7 +12,7 @@ def partText(msg, dim):
 def hillCipher(msg, key, mode = 'encrypt'):
     msgPadding = partText(msg,2);
     msgCode = np.array([[(ord(i.upper()) - 65) % 26 for i in msgPadding[j]] for j in range(len(msgPadding))])
-    if mode == "encrypt":
+    if mode == "encrypt" or mode == 'e':
         cipherKey = np.zeros_like(key)
         cipherText = ''
         for row in msgCode:
@@ -24,7 +24,7 @@ def hillCipher(msg, key, mode = 'encrypt'):
                 cipherText += (chr(j+65))
         return cipherText
     
-    elif mode == 'decrypt':
+    elif mode == 'decrypt' or mode == 'd':
         plainKey = np.zeros_like(key)
         plainText = ''
         inverseMatrix = np.linalg.inv(key)
@@ -46,7 +46,6 @@ def hillCipher(msg, key, mode = 'encrypt'):
     else:
         print("Please select correct mode either encrypt or decrypt")
         main()
-        
 def main():
     msg, mode = input("Enter massage and method : ").split()
     dim = int(input("Enter dimension of key matrix : "))
