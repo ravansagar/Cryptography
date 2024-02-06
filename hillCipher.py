@@ -46,6 +46,7 @@ def hillCipher(msg, key, mode = 'encrypt'):
     else:
         print("Please select correct mode either encrypt or decrypt")
         main()
+        
 def main():
     msg, mode = input("Enter massage and method : ").split()
     dim = int(input("Enter dimension of key matrix : "))
