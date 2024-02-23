@@ -1,4 +1,4 @@
-import pyautogui, pyAesCrypt, os, mimetypes, threading, timeit
+import pyautogui, pyAesCrypt, os, mimetypes, threading
 from tkinter import Tk, Label, Button, Entry
 from time import sleep, time
 
